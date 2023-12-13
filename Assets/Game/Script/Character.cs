@@ -18,6 +18,11 @@ public class Character : MonoBehaviour
     private UnityEngine.AI.NavMeshAgent _navMeshAgent;
     private Transform targetPlayer;
 
+    // player slides
+    private float attackStartTime;
+    public float attackSlideDuration = 0.4f;
+    public float attackSlideSpeed = 0.06f;
+
     // state machine
     public enum CharacterState
     {
@@ -88,6 +93,8 @@ public class Character : MonoBehaviour
         {
             _navMeshAgent.SetDestination(transform.position);
             _animator.SetFloat("Speed", 0f);
+
+            SwitchStateTo(CharacterState.attacking);
         }
     }
 
@@ -106,6 +113,16 @@ public class Character : MonoBehaviour
                 }
                 break;
             case CharacterState.attacking:
+                if (isPlayer)
+                {
+                    _movementVelocity = Vector3.zero;
+                    if (Time.time < attackStartTime + attackSlideDuration)
+                    {
+                        float timePassed = Time.time - attackStartTime;
+                        float lerpTime = timePassed / attackSlideDuration;
+                        _movementVelocity = Vector3.Lerp(transform.forward * attackSlideSpeed, Vector3.zero, lerpTime);
+                    }
+                }
                 break;
         }
         
@@ -129,8 +146,11 @@ public class Character : MonoBehaviour
     private void SwitchStateTo(CharacterState newState)
     {
         // clear cache
-        _playerInput.mouseButtonDown = false;
-
+        if (isPlayer)
+        {
+            _playerInput.mouseButtonDown = false;
+        }
+ 
         // exiting state
         switch (currentState)
         {
@@ -146,7 +166,18 @@ public class Character : MonoBehaviour
             case CharacterState.normal:
                 break;
             case CharacterState.attacking:
+                if (!isPlayer)
+                {
+                    Quaternion newRotation = Quaternion.LookRotation(targetPlayer.position - transform.position);
+                    transform.rotation = newRotation;
+                }
+
                 _animator.SetTrigger("Attack");
+
+                if (isPlayer)
+                {
+                    attackStartTime = Time.time;
+                }
                 break;
         }
 
