@@ -25,7 +25,7 @@ public class DamageCaster : MonoBehaviour
 
             if (targetCC != null)
             {
-                targetCC.ApplyDamage(damage);
+                targetCC.ApplyDamage(damage, transform.parent.position);
 
                 PlayerVFXManager playerVFXManager = transform.parent.GetComponent<PlayerVFXManager>();
 
@@ -61,23 +61,23 @@ public class DamageCaster : MonoBehaviour
     }
 
     // this is to check the hit effect position by gizmos method
-    private void OnDrawGizmos() 
-    {
-        if (damageCasterCollider == null)
-        {
-            damageCasterCollider = GetComponent<Collider>();
-        }
+    // private void OnDrawGizmos() 
+    // {
+    //     if (damageCasterCollider == null)
+    //     {
+    //         damageCasterCollider = GetComponent<Collider>();
+    //     }
 
-        RaycastHit hit;
+    //     RaycastHit hit;
 
-        Vector3 originalPos = transform.position + (-damageCasterCollider.bounds.extents.z) * transform.forward;
+    //     Vector3 originalPos = transform.position + (-damageCasterCollider.bounds.extents.z) * transform.forward;
 
-        bool isHit = Physics.BoxCast(originalPos, damageCasterCollider.bounds.extents / 2, transform.forward, out hit, transform.rotation, damageCasterCollider.bounds.extents.z, 1<<6);
+    //     bool isHit = Physics.BoxCast(originalPos, damageCasterCollider.bounds.extents / 2, transform.forward, out hit, transform.rotation, damageCasterCollider.bounds.extents.z, 1<<6);
 
-        if (isHit)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(hit.point, 0.3f);
-        }
-    }
+    //     if (isHit)
+    //     {
+    //         Gizmos.color = Color.yellow;
+    //         Gizmos.DrawWireSphere(hit.point, 0.3f);
+    //     }
+    // }
 }

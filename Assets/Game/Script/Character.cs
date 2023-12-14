@@ -209,6 +209,12 @@ public class Character : MonoBehaviour
         {
             _health.ApplyDamage(damage);
         }
+
+        // enemy being hit vfx
+        if (!isPlayer)
+        {
+            GetComponent<EnemyVFXManager>().PlayBeingHitVFX(attackerPos);
+        }
     }
 
     public void EnableDamageCaster()
